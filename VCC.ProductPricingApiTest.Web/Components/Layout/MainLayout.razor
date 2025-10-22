@@ -1,0 +1,70 @@
+﻿@inherits LayoutComponentBase
+@using MudBlazor
+@using MudBlazor.Utilities
+
+
+<MudThemeProvider Theme="vccTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+
+    <!-- LEft Nav -->
+    <MudDrawer Open="true"
+               Anchor="Anchor.Start"
+               Elevation="1"
+               Variant="DrawerVariant.Mini"
+               Color="Color.Tertiary">
+        <MudNavMenu>
+                <MudImage Class="d-flex ma-3"
+                    Src="/img/vccLogo.webp"
+                    Width="150"/>
+            <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home" IconColor="Color.Primary">Home</MudNavLink>
+            <MudNavLink Href="/products" Icon="@Icons.Material.Filled.FormatListBulleted" IconColor="Color.Primary">Products</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <!-- Top Header -->
+    <MudAppBar Elevation="0" Color="Color.Tertiary">
+        <MudText Typo="Typo.h6">Product Pricing API Technical Test Submission</MudText>
+    </MudAppBar>
+
+    <!-- Main Body -->
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+
+</MudLayout>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+
+@code {
+    MudTheme vccTheme = new MudTheme()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = Colors.Shades.White,
+            Secondary = Colors.Shades.Black,
+            Tertiary = new MudColor(82, 79, 158, 255),
+            AppbarBackground = Colors.Red.Default,
+            TextPrimary = Colors.Shades.Black,
+            TextSecondary = Colors.Shades.White
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = Colors.Shades.White,
+            Secondary = Colors.Shades.Black,
+            Tertiary = new MudColor(82, 79, 158, 255),
+            TextPrimary = Colors.Shades.Black,
+            TextSecondary = Colors.Shades.White
+        }
+    };
+}

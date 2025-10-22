@@ -1,0 +1,63 @@
+﻿@using MudBlazor
+@inject ISnackbar Snackbar
+
+
+<MudStack Direction="Row" Spacing="1">
+    <MudTooltip Text="@Tooltip">
+        <MudIcon Icon="@Icon" />
+    </MudTooltip>
+
+    <MudTextField @bind-Value="_value"
+                  T="decimal?"
+                  Label="@InputLabel"
+                  InputType="InputType.Number"
+                  Variant="Variant.Outlined"
+                  Dense="true"
+                  Adornment="@(string.IsNullOrWhiteSpace(AdornmentText) ? Adornment.None : Adornment.Start)"
+                  AdornmentText="@AdornmentText"
+                  Class="w-28" />
+
+    <MudButton ButtonType="ButtonType.Button" Size="Size.Small"
+               Color="@Color"
+               Variant="Variant.Filled"
+               OnClick="@SubmitAsync">
+        @SubmitText
+    </MudButton>
+</MudStack>
+
+@code {
+    [Parameter] public int ProductId { get; set; }
+    [Parameter] public string Tooltip { get; set; } = "";
+    [Parameter] public string Icon { get; set; } = Icons.Material.Filled.Edit;
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+
+    [Parameter] public string InputLabel { get; set; } = "Value";
+    [Parameter] public string? AdornmentText { get; set; } // prefix lil characters such as "£" or "%"
+
+    [Parameter] public Func<int, decimal, Task>? OnSubmit { get; set; }
+    [Parameter] public string SubmitText { get; set; } = "Submit";
+
+    private decimal? _value;
+    private bool _busy = false;
+
+    private async Task SubmitAsync()
+    {
+        if (!_value.HasValue || OnSubmit == null) 
+            return;
+
+        try
+        {
+            _busy = true;
+            await OnSubmit.Invoke(ProductId, _value.Value);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+            _value = null;
+        }
+    }
+}
