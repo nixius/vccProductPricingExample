@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using VCC.ProductPricingApiTest.BLL;
 using VCC.ProductPricingApiTest.DataAccess;
 using VCC.ProductPricingApiTest.Models.DataAccess;
@@ -42,7 +43,35 @@ namespace VCC.ProductPricingApiTest.Api
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IPriceService, PriceService>();
 
+
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "vccProductPricingExample",
+                    Version = "v1",
+                    Description = "vcc Product Pricing Example",
+                });
+
+                // Optional: include XML comments (enable in csproj below)
+                var xmlName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlName);
+                if (System.IO.File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+                }
+            });
+
             var app = builder.Build();
+
+            // Use Swagger
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
+                c.RoutePrefix = "swagger"; // UI at /swagger
+            });
 
             switch (dataAccessMode)
             {
