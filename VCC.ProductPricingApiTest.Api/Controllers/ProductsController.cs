@@ -54,6 +54,8 @@ namespace VCC.ProductPricingApiTest.Api.Controllers
 
             var discountPrice = _priceService.GetDiscountPrice(discountedProd.OriginalPrice, discountRequest.DiscountPercentage);
 
+            await _productService.LogDiscountPriceHistoryAsync(id, discountRequest.DiscountPercentage, discountedProd.OriginalPrice, discountPrice);
+
             return Ok(new ApplyProductDiscountResponse()
             {
                 Id = discountedProd.Id,

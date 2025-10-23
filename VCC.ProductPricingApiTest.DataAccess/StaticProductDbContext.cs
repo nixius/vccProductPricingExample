@@ -56,7 +56,7 @@ namespace VCC.ProductPricingApiTest.DataAccess
             }
         }
 
-        public bool UpdateProduct(int productId, string? name = null, decimal? price = null)
+        public bool UpdateProduct(int productId, string? name = null, decimal? price = null, decimal? discountPercentage  = null)
         {
             // we can't update without valid date
             if (productId <= 0 || (string.IsNullOrEmpty(name) && !price.HasValue))
@@ -78,7 +78,13 @@ namespace VCC.ProductPricingApiTest.DataAccess
                     dbProd.Price = price.Value;
 
                     var newHistId = InMemoryPriceHistoryRepos.Max(ph => ph.ProductHistoryEntryId) + 1;
-                    InMemoryPriceHistoryRepos.Add(new DbProductHistoryEntry() { ProductHistoryEntryId = newHistId, Date = DateTime.UtcNow, Price = price.Value, ProductId = productId });
+                    InMemoryPriceHistoryRepos.Add(new DbProductHistoryEntry() { 
+                        ProductHistoryEntryId = newHistId, 
+                        Date = DateTime.UtcNow, 
+                        Price = price.Value, 
+                        ProductId = productId,
+                        DiscountPercentage = discountPercentage
+                    });
                 }
 
                 dbProd.LastUpdatedUtc = DateTime.UtcNow;

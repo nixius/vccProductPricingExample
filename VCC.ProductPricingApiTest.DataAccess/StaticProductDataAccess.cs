@@ -36,12 +36,12 @@ namespace VCC.ProductPricingApiTest.DataAccess
 
         public async Task<bool> UpdateProductAsync(DbProduct dbProd)
         {
-            return await (Task.Run(() => StaticProductDbContext.Instance.UpdateProduct(dbProd.ProductId, dbProd.Name, dbProd.Price)));
+            return await (Task.Run(() => StaticProductDbContext.Instance.UpdateProduct(dbProd.ProductId, dbProd.Name, dbProd.Price, null)));
         }
 
-        public async Task<bool> UpdatePriceAsync(int productId, decimal price)
+        public async Task<bool> UpdatePriceAsync(int productId, decimal price, decimal? discountPercentage)
         {
-            return await (Task.Run(() => StaticProductDbContext.Instance.UpdateProduct(productId, null, price)));
+            return await (Task.Run(() => StaticProductDbContext.Instance.UpdateProduct(productId, null, price, discountPercentage)));
         }
 
         public async Task<List<DbProductDiscount>> GetDiscountsAsync()

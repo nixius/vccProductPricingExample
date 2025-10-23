@@ -11,33 +11,25 @@
 
         <MudTable Items="_entries" Dense="true" Hover="true" Bordered="true" Loading="@_loading" Class="mt-3">
             <HeaderContent>
-                <MudTh style="width:50%">Changed At (UTC)</MudTh>
-                <MudTh Class="text-right" style="width:25%">Price</MudTh>
-                <MudTh Class="text-right" style="width:25%">Was Discounted</MudTh>
+                <MudTh style="width:30%">Changed At (UTC)</MudTh>
+                <MudTh Class="text-right" style="width:25%">Retail Price Change</MudTh>
+                <MudTh Class="text-right" style="width:25%">Discount Price Change</MudTh>
             </HeaderContent>
 
             <RowTemplate>
                 <MudTd>@context.Date.ToString("yyyy-MM-dd HH:mm:ss")</MudTd>
                 <MudTd Class="text-right">
-                    @if (@context.AtDiscount)
+                    @if (!@context.DiscountPercentage.HasValue)
                     {
                         <MudText Color="Color.Secondary">@context.Price.ToString("C")</MudText>
                     }
-                    else
-                    {
-                        <MudText Color="Color.Tertiary">@context.Price.ToString("C")</MudText>
-                    }
                 </MudTd>
                 <MudTd Class="text-right">
-                    @if (@context.AtDiscount)
+                    @if (@context.DiscountPercentage.HasValue)
                     {
-                        <MudText Color="Color.Secondary">No</MudText>
+                        <MudText Color="Color.Tertiary">@context.Price.ToString("C") <small>(at @context.DiscountPercentage % off)</small></MudText>
                     }
-                    else
-                    {
-                        <MudText Color="Color.Tertiary">Yes</MudText>
-                    }
-                    </MudTd>
+                </MudTd>
             </RowTemplate>
 
             <NoRecordsContent>

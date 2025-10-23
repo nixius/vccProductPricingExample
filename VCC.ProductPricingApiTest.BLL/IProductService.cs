@@ -10,5 +10,7 @@ namespace VCC.ProductPricingApiTest.BLL
         Task<ApiProductHistory> GetProductHistoryByIdAsync(int productId);
         Task<ApiProduct> SetDiscountPriceAsync(int productId, decimal discount);
         Task<ApiProduct> UpdatePriceAsync(int productId, decimal discount);
+        Task LogDiscountPriceHistoryAsync(int productId, decimal discountPercm, decimal prevPrice, decimal newPrice);
+
     }
 }

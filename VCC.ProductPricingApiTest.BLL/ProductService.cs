@@ -65,13 +65,25 @@ namespace VCC.ProductPricingApiTest.BLL
             if (productId <= 0 || newPrice <= 0.0m)
                 return null;
 
-            var result = await _productDB.UpdatePriceAsync(productId, newPrice);
+
+            var discount = await _productDB.GetDiscountsForProductAsync(productId);
+
+            var result = await _productDB.UpdatePriceAsync(productId, newPrice, null);
             if (!result)
                 return null;
 
+
             var latestProd = await _productDB.GetProductByIdAsync(productId);
+
             var retProd = ConvertToApiProd(latestProd);
+
+
             return retProd;
+        }
+
+        public async Task LogDiscountPriceHistoryAsync(int productId, decimal discountPercm, decimal prevPrice, decimal newPrice)
+        {
+            await _productDB.LogDiscountPriceHistoryAsync(productId,discountPercm,prevPrice,newPrice);
         }
 
         private ApiProduct ConvertToApiProd(DbProduct dbProd)
@@ -105,7 +117,7 @@ namespace VCC.ProductPricingApiTest.BLL
             { 
                 Date = ph.Date, 
                 Price = ph.Price,
-                AtDiscount = ph.DiscountPercentage.HasValue
+                DiscountPercentage = (ph.DiscountPercentage == null || ph.DiscountPercentage <= 0) ? null : ph.DiscountPercentage
             }));
 
             return apiProd;

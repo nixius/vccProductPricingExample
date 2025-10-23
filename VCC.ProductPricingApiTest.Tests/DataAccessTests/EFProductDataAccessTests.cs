@@ -119,7 +119,7 @@ namespace VCC.ProductPricingApiTest.Tests.DataAccessTests
         [Test]
         public async Task UpdatePrice_CompletesSuccesfully()
         {
-            var newProd = await _productDb.UpdatePriceAsync(3, 55.0m);
+            var newProd = await _productDb.UpdatePriceAsync(3, 55.0m, null);
             Assert.That(newProd, Is.True);
         }
 

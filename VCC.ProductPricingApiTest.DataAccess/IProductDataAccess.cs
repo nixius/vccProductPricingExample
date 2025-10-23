@@ -14,6 +14,6 @@ namespace VCC.ProductPricingApiTest.DataAccess
        Task SetDiscountPriceAsync(int productId, decimal discount);
        Task LogDiscountPriceHistoryAsync(int productId, decimal discountPercm, decimal prevPrice, decimal newPrice);
        Task<bool> UpdateProductAsync(DbProduct dbProd);
-       Task<bool> UpdatePriceAsync(int productId, decimal price);
+       Task<bool> UpdatePriceAsync(int productId, decimal price, decimal? discountPercentage);
     }
 }

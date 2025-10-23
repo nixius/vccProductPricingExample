@@ -77,23 +77,25 @@ namespace VCC.ProductPricingApiTest.Api
         {
             var prods = new List<DbProduct>()
             {
-                new DbProduct() { ProductId = 1, Name = "A", Price = 100.0m, LastUpdatedUtc = DateTime.UtcNow },
-                new DbProduct() { ProductId = 2, Name = "B", Price = 200.0m, LastUpdatedUtc = DateTime.UtcNow },
-                new DbProduct() { ProductId = 3, Name = "C", Price = 300.0m, LastUpdatedUtc = DateTime.UtcNow }
+                new DbProduct() { ProductId = 1, Name = "Assorted Gold coins", Price = 100.0m, LastUpdatedUtc = DateTime.UtcNow },
+                new DbProduct() { ProductId = 2, Name = "Atari Jaguar (Non-working)", Price = 200.0m, LastUpdatedUtc = DateTime.UtcNow },
+                new DbProduct() { ProductId = 3, Name = "Vase", Price = 300.0m, LastUpdatedUtc = DateTime.UtcNow }
             };
 
             var hist = new List<DbProductHistoryEntry>()
             {
-                new DbProductHistoryEntry() { ProductHistoryEntryId = 1, ProductId = 1, Price = 100, Date = DateTime.UtcNow },
-                new DbProductHistoryEntry() { ProductHistoryEntryId = 2, ProductId = 1, Price = 110, Date = DateTime.UtcNow },
-                new DbProductHistoryEntry() { ProductHistoryEntryId = 3, ProductId = 2, Price = 200, Date = DateTime.UtcNow },
-                new DbProductHistoryEntry() { ProductHistoryEntryId = 4, ProductId = 2, Price = 210, Date = DateTime.UtcNow },
-                new DbProductHistoryEntry() { ProductHistoryEntryId = 5, ProductId = 3, Price = 300, Date = DateTime.UtcNow }
+                new DbProductHistoryEntry() { ProductHistoryEntryId = 1, ProductId = 1, Price = 100, Date = DateTime.UtcNow.AddMinutes(-5) },
+                new DbProductHistoryEntry() { ProductHistoryEntryId = 2, ProductId = 1, Price = 110, Date = DateTime.UtcNow.AddMinutes(-4) },
+                new DbProductHistoryEntry() { ProductHistoryEntryId = 3, ProductId = 2, Price = 200, Date = DateTime.UtcNow.AddMinutes(-3) },
+                new DbProductHistoryEntry() { ProductHistoryEntryId = 4, ProductId = 2, Price = 210, Date = DateTime.UtcNow.AddMinutes(-2) },
+                new DbProductHistoryEntry() { ProductHistoryEntryId = 5, ProductId = 3, Price = 300, Date = DateTime.UtcNow.AddMinutes(-1)},
+                new DbProductHistoryEntry() { ProductHistoryEntryId = 6, ProductId = 3, Price = 150, Date = DateTime.UtcNow, DiscountPercentage = 50m},
+
             };
 
             var discounts = new List<DbProductDiscount>()
             {
-                new DbProductDiscount() {ProductDiscountId = 1, ProductId = 3, DiscountPercentage = 10m }
+                new DbProductDiscount() { ProductDiscountId = 1, DiscountPercentage = 50, ProductId = 3}
             };
 
             StaticProductDbContext.Instance.InitialiseData(prods, hist, discounts);
@@ -105,9 +107,9 @@ namespace VCC.ProductPricingApiTest.Api
             if (await db.Products.AnyAsync()) 
                 return;
 
-            var p1 = new EFProduct { Name = "A", LastUpdated = DateTime.UtcNow, Price = 100m };
-            var p2 = new EFProduct { Name = "B", LastUpdated = DateTime.UtcNow, Price = 200m };
-            var p3 = new EFProduct { Name = "C", LastUpdated = DateTime.UtcNow, Price = 300m };
+            var p1 = new EFProduct { Name = "French Franks (1940)", LastUpdated = DateTime.UtcNow, Price = 100m };
+            var p2 = new EFProduct { Name = "Casio Cassette player", LastUpdated = DateTime.UtcNow, Price = 200m };
+            var p3 = new EFProduct { Name = "1850's Encyclopedia Collection", LastUpdated = DateTime.UtcNow, Price = 300m };
 
             db.Products.AddRange(p1, p2, p3);
 
@@ -117,11 +119,13 @@ namespace VCC.ProductPricingApiTest.Api
                             new EFProductPriceHistory { Product = p1, Timestamp = DateTime.UtcNow, NewPrice = 120m },
                             new EFProductPriceHistory { Product = p2, Timestamp = DateTime.UtcNow, NewPrice = 200m },
                             new EFProductPriceHistory { Product = p2, Timestamp = DateTime.UtcNow, NewPrice = 210m },
-                            new EFProductPriceHistory { Product = p3, Timestamp = DateTime.UtcNow, NewPrice = 300m }
+                            new EFProductPriceHistory { Product = p3, Timestamp = DateTime.UtcNow, NewPrice = 300m },
+                            new EFProductPriceHistory { Product = p3, Timestamp = DateTime.UtcNow, NewPrice = 150m, DiscountPercentage = 50 }
+
                         );
 
             db.ProductDiscounts.Add(
-                new EFProductDiscount { Product = p3, DiscountPercentage = 10m }
+                new EFProductDiscount { Product = p3, DiscountPercentage = 50m }
             );
 
             await db.SaveChangesAsync();

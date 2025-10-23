@@ -24,7 +24,7 @@ namespace VCC.ProductPricingApiTest.Tests.ServiceTests
         [TestCase(3, 999.99)]
         public async Task UpdatePriceAsync_valiParams_ReturnsExpected(int productId, decimal newValue)
         {
-            _db.UpdatePriceAsync(productId, newValue).Returns(true);
+            _db.UpdatePriceAsync(productId, newValue, null).Returns(true);
             _db.GetProductByIdAsync(productId).Returns(new DbProduct()
             {
                 ProductId = productId,
@@ -40,7 +40,7 @@ namespace VCC.ProductPricingApiTest.Tests.ServiceTests
             Assert.That(updatePriceResult.Id, Is.EqualTo(productId));
             Assert.That(updatePriceResult.OriginalPrice, Is.EqualTo(newValue));
 
-            await _db.Received(1).UpdatePriceAsync(productId, newValue);
+            await _db.Received(1).UpdatePriceAsync(productId, newValue, null);
             await _db.Received(1).GetProductByIdAsync(productId);
         }
 

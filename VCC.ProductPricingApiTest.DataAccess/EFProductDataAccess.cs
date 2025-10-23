@@ -163,7 +163,7 @@ namespace VCC.ProductPricingApiTest.DataAccess
             return true;
         }
 
-        public async Task<bool> UpdatePriceAsync(int productId, decimal price)
+        public async Task<bool> UpdatePriceAsync(int productId, decimal price, decimal? discountPercentage)
         {
             var p = await _db.Products.FindAsync(productId);
             if (p == null) 
@@ -178,7 +178,7 @@ namespace VCC.ProductPricingApiTest.DataAccess
                 Timestamp = DateTime.UtcNow,
                 OldPrice = oldPrice,
                 NewPrice = price,
-                DiscountPercentage = null
+                DiscountPercentage = discountPercentage
             });
 
             p.LastUpdated = DateTime.UtcNow;

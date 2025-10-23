@@ -173,15 +173,15 @@ namespace VCC.ProductPricingApiTest.DataAccess
             return (await conn.ExecuteAsync(sb.ToString(), new { productId = dbProd.ProductId, lastUpdated = DateTime.UtcNow })) == 1;
         }
 
-        public async Task<bool> UpdatePriceAsync(int productId, decimal price)
+        public async Task<bool> UpdatePriceAsync(int productId, decimal price, decimal? discountPercentage)
         {
             using var conn = new SqlConnection(_connectionString);
 
             var sb = new StringBuilder();
             sb.AppendLine("INSERT INTO dbo.ProductPriceHistory (ProductId, [Timestamp], OldPrice, NewPrice, DiscountPercentage) ");
-            sb.AppendLine("VALUES (@productId,@timestamp, @oldPrice, @price, NULL);");
+            sb.AppendLine("VALUES (@productId,@timestamp, @oldPrice, @price, @discountPercentage);");
 
-            var rows = await conn.ExecuteAsync(sb.ToString(), new { productId, price });
+            var rows = await conn.ExecuteAsync(sb.ToString(), new { productId, price, discountPercentage });
             return rows == 1;
         }
     }
