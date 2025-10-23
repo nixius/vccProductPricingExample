@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
-using System.Collections;
 using VCC.ProductPricingApiTest.Api.Controllers;
 using VCC.ProductPricingApiTest.BLL;
-using VCC.ProductPricingApiTest.DataAccess;
 using VCC.ProductPricingApiTest.Models.Api;
 
 namespace VCC.ProductPricingApiTest.Tests.ControllerTests
@@ -34,10 +31,21 @@ namespace VCC.ProductPricingApiTest.Tests.ControllerTests
         {
             _productService.GetProductsAsync().Returns(new List<ApiProduct>()
             {
-                new ApiProduct() { Id = 1, CurrentPrice = 100, LastUpdatedUtc = DateTime.UtcNow, Name = "A" },
-                new ApiProduct() { Id = 2, CurrentPrice = 100, LastUpdatedUtc = DateTime.UtcNow, Name = "B" },
-                new ApiProduct() { Id = 2, CurrentPrice = 100, LastUpdatedUtc = DateTime.UtcNow, Name = "C" }
+                new ApiProduct() { Id = 1, CurrentPrice = 100, OriginalPrice = 100, LastUpdatedUtc = DateTime.UtcNow, Name = "A" },
+                new ApiProduct() { Id = 2, CurrentPrice = 100, OriginalPrice = 100,LastUpdatedUtc = DateTime.UtcNow, Name = "B" },
+                new ApiProduct() { Id = 3, CurrentPrice = 100, OriginalPrice = 100,LastUpdatedUtc = DateTime.UtcNow, Name = "C" }
             });
+
+            _productService.GetDiscountsAsync().Returns(new List<ApiProductDiscount>()
+            {
+                new ApiProductDiscount()
+                {
+                    Id = 1,
+                    DiscountPercentage = 50
+                },
+            });
+
+            _priceService.GetDiscountPrice(100m, 50m).Returns(50m);
 
             var pc = new ProductsController(null, _productService, _priceService);
 
@@ -54,8 +62,15 @@ namespace VCC.ProductPricingApiTest.Tests.ControllerTests
             Assert.That(model, Is.Not.Null);
             Assert.That(model, Has.Count.EqualTo(3));
             Assert.That(model[0].Name, Is.EqualTo("A"));
+            Assert.That(model[0].OriginalPrice, Is.EqualTo(100m));
+            Assert.That(model[0].CurrentPrice, Is.EqualTo(50m));
+            Assert.That(model[1].OriginalPrice, Is.EqualTo(100m));
+            Assert.That(model[1].CurrentPrice, Is.EqualTo(100m));
 
             await _productService.Received(1).GetProductsAsync();
+            await _productService.Received(1).GetDiscountsAsync();
+            _priceService.Received(1).GetDiscountPrice(100m,50m);
+
         }
 
         [Test]
@@ -103,9 +118,11 @@ namespace VCC.ProductPricingApiTest.Tests.ControllerTests
             _productService.SetDiscountPriceAsync(5, discount).Returns(new ApiProduct()
             {
                 Id = 1,
-                CurrentPrice = price,
+                OriginalPrice = price,
+                CurrentPrice = discountPrice,
                 Name = "A",
-                LastUpdatedUtc = DateTime.UtcNow
+                LastUpdatedUtc = DateTime.UtcNow,
+                DiscountPercentage = discount
             });
 
             _priceService.GetDiscountPrice(price, discount).Returns(discountPrice);
@@ -174,7 +191,7 @@ namespace VCC.ProductPricingApiTest.Tests.ControllerTests
             _productService.UpdatePriceAsync(5, newPrice).Returns(new ApiProduct()
             {
                 Id = 5,
-                CurrentPrice = newPrice,
+                OriginalPrice = newPrice,
                 Name = "A",
                 LastUpdatedUtc = DateTime.UtcNow
             });
@@ -197,7 +214,7 @@ namespace VCC.ProductPricingApiTest.Tests.ControllerTests
             var model = okResult!.Value as UpdateProductPriceResponse;
             Assert.That(model, Is.Not.Null);
             Assert.That(model.Id, Is.EqualTo(5));
-            Assert.That(model.NewPrice, Is.EqualTo(newPrice));
+            Assert.That(model.OriginalPrice, Is.EqualTo(newPrice));
             Assert.That(model.Name, Is.EqualTo("A"));
 
             await _productService.Received(1).UpdatePriceAsync(5, newPrice);

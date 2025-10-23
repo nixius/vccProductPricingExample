@@ -31,8 +31,7 @@ namespace VCC.ProductPricingApiTest.Tests
             serviceCollection.AddKeyedScoped<IProductDataAccess, EFProductDataAccess>("ef");
             serviceCollection.AddKeyedScoped<IProductDataAccess, DapperProductDataAccess>("dapper");
 
-            serviceCollection.AddSingleton<ProductService>();
-            serviceCollection.AddSingleton<PriceService>();
+            serviceCollection.AddScoped<IPriceService, PriceService>();
 
             _serviceProvider = serviceCollection.BuildServiceProvider();
         }

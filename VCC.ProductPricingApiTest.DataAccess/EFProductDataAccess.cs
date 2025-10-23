@@ -96,7 +96,8 @@ namespace VCC.ProductPricingApiTest.DataAccess
                     ProductHistoryEntryId = h.ProductPriceHistoryId,
                     ProductId = h.ProductId,
                     Price = h.NewPrice,
-                    Date = h.Timestamp
+                    Date = h.Timestamp,
+                    DiscountPercentage = h.DiscountPercentage
                 })
                 .ToList();
 
@@ -134,6 +135,23 @@ namespace VCC.ProductPricingApiTest.DataAccess
             await _db.SaveChangesAsync();
         }
 
+        public async Task LogDiscountPriceHistoryAsync(int productId, decimal discountPerc, decimal prevPrice, decimal newPrice)
+        {
+            var product = await _db.Products.FindAsync(productId)
+                          ?? throw new KeyNotFoundException($"Product {productId} not found.");
+
+            _db.ProductPriceHistories.Add(new EFProductPriceHistory
+            {
+                ProductId = productId,
+                Timestamp = DateTime.UtcNow,
+                OldPrice = prevPrice,
+                NewPrice = newPrice,
+                DiscountPercentage = discountPerc
+            });
+
+            await _db.SaveChangesAsync();
+        }
+
         public async Task<bool> UpdateProductAsync(DbProduct dbProd)
         {
             var p = await _db.Products.FindAsync(dbProd.ProductId);
@@ -159,7 +177,8 @@ namespace VCC.ProductPricingApiTest.DataAccess
                 ProductId = productId,
                 Timestamp = DateTime.UtcNow,
                 OldPrice = oldPrice,
-                NewPrice = price
+                NewPrice = price,
+                DiscountPercentage = null
             });
 
             p.LastUpdated = DateTime.UtcNow;

@@ -12,6 +12,8 @@ namespace VCC.ProductPricingApiTest.Models.Api
         public decimal CurrentPrice { get; set; }
         [JsonPropertyName("originalPrice")]
         public decimal OriginalPrice { get; set; }
+        [JsonPropertyName("discountPercentage")]
+        public decimal? DiscountPercentage { get; set; }
         [JsonPropertyName("lastUpdated")]
         public DateTime LastUpdatedUtc { get; set; }
     }

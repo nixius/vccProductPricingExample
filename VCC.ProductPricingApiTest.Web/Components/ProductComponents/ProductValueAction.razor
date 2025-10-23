@@ -2,24 +2,24 @@
 @inject ISnackbar Snackbar
 
 
-<MudStack Direction="Row" Spacing="1">
-    <MudTooltip Text="@Tooltip">
-        <MudIcon Icon="@Icon" />
-    </MudTooltip>
-
+<MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.Center">
     <MudTextField @bind-Value="_value"
                   T="decimal?"
-                  Label="@InputLabel"
                   InputType="InputType.Number"
-                  Variant="Variant.Outlined"
-                  Dense="true"
+                  Variant="Variant.Text"
+                  Disabled="_busy"
                   Adornment="@(string.IsNullOrWhiteSpace(AdornmentText) ? Adornment.None : Adornment.Start)"
                   AdornmentText="@AdornmentText"
-                  Class="w-28" />
+                  Immediate="true"
+                  Class=""
+                  Style="width:110px" />
 
-    <MudButton ButtonType="ButtonType.Button" Size="Size.Small"
+    <MudButton ButtonType="ButtonType.Button"
+               Size="Size.Small"
                Color="@Color"
                Variant="Variant.Filled"
+               Disabled="@(!_value.HasValue || _busy || OnSubmit is null)"
+               Class=""
                OnClick="@SubmitAsync">
         @SubmitText
     </MudButton>

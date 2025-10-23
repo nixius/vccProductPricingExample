@@ -6,6 +6,8 @@ namespace VCC.ProductPricingApiTest.Models.Api
     {
         [JsonPropertyName("price")]
         public decimal Price { get; set; }
+        [JsonPropertyName("price")]
+        public bool AtDiscount { get; set; } = false;
         [JsonPropertyName("date")]
         public DateTime Date { get; set; }
     }

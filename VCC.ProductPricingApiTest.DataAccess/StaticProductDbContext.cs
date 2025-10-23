@@ -1,4 +1,5 @@
 ﻿using VCC.ProductPricingApiTest.Models.DataAccess;
+using VCC.ProductPricingApiTest.Models.EFDataAccess;
 
 namespace VCC.ProductPricingApiTest.DataAccess
 {
@@ -148,7 +149,8 @@ namespace VCC.ProductPricingApiTest.DataAccess
                         ProductHistoryEntryId = ho.ProductHistoryEntryId,
                         Date = ho.Date,
                         Price = ho.Price,
-                        ProductId = productId
+                        ProductId = productId,
+                        DiscountPercentage = ho.DiscountPercentage
                     });
                 }
                 return retHist;
@@ -169,6 +171,21 @@ namespace VCC.ProductPricingApiTest.DataAccess
                 {
                     discount.DiscountPercentage = discountPerc;
                 }
+            }
+        }
+
+        public void LogDiscountPriceHistoryAsync(int productId, decimal discountPerc, decimal prevPrice, decimal newPrice)
+        {
+            lock (_lock)
+            {
+                InMemoryPriceHistoryRepos.Add(new DbProductHistoryEntry()
+                {
+                    ProductId = productId,
+                    Date = DateTime.UtcNow,
+                    DiscountPercentage = discountPerc,
+                    Price = newPrice,
+                    ProductHistoryEntryId = InMemoryPriceHistoryRepos.Max(x => x.ProductHistoryEntryId) + 1
+                });
             }
         }
 

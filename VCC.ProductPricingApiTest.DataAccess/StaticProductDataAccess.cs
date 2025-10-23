@@ -29,6 +29,10 @@ namespace VCC.ProductPricingApiTest.DataAccess
             await (Task.Run(() => StaticProductDbContext.Instance.SetProductDiscount(productId, discount)));
         }
 
+        public async Task LogDiscountPriceHistoryAsync(int productId, decimal discountPerc, decimal prevPrice, decimal newPrice)
+        {
+            await (Task.Run(() => StaticProductDbContext.Instance.LogDiscountPriceHistoryAsync(productId, discountPerc, prevPrice, newPrice)));
+        }
 
         public async Task<bool> UpdateProductAsync(DbProduct dbProd)
         {

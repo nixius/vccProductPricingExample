@@ -10,31 +10,65 @@
 
 <h3>ProductList</h3>
 
-<MudTable Items="_products" Loading="@_loading" Hover="true" Dense="true" Bordered="true" Elevation="0">
-    <ToolBarContent>
-        <MudText Typo="Typo.subtitle2" Class="ml-2">Total: @_products.Count()</MudText>
-        <MudSpacer />
-    </ToolBarContent>
-
+<MudTable Items="_products" Loading="@_loading" Hover="true" Dense="true" Bordered="true" Elevation="0" Class="mud-table-striped">
     <HeaderContent>
-        <MudTh style="width:20%">Product</MudTh>
-        <MudTh Class="text-right" style="width:10%">Original Price</MudTh>
-        <MudTh Class="text-right" style="width:10%">Discount Price</MudTh>
-        <MudTh style="width:12%">Last Updated (UTC)</MudTh>
-        <MudTh Class="text-right">Actions</MudTh>
+        <MudTh style="width:26%">Product</MudTh>
+        <MudTh style="width:10%">Retail Price</MudTh>
+        <MudTh style="width:15%">
+            Live Price
+            <MudTooltip Text="The price, including discount, that the customer will see to purchase for">
+                <MudIcon Icon="@Icons.Material.Filled.Info"
+                         Color="Color.Tertiary"
+                         Size="Size.Small"
+                         Class="ms-1 cursor-pointer" />
+            </MudTooltip>
+        </MudTh>
+        <MudTh style="width:15%">Last Updated (UTC)</MudTh>
+        <MudTh style="width:12%">
+            Set Retail Price
+            <MudTooltip Text="Set a new retail price for the product - any discounts will still be applied">
+                <MudIcon Icon="@Icons.Material.Filled.Info"
+                         Color="Color.Tertiary"
+                         Size="Size.Small"
+                         Class="ms-1 cursor-pointer" />
+            </MudTooltip>
+        </MudTh>
+        <MudTh style="width:12%">
+            Set Discount
+            <MudTooltip Text="Set a discount for this product, you can select below 100% and above 0%">
+                <MudIcon Icon="@Icons.Material.Filled.Info"
+                         Color="Color.Tertiary"
+                         Size="Size.Small"
+                         Class="ms-1 cursor-pointer" />
+            </MudTooltip>
+        
+        </MudTh>
+        <MudTh Class="width:10%">Price History</MudTh>
+         
     </HeaderContent>
 
     <RowTemplate>
         <MudTd DataLabel="Product">@context.ProductName</MudTd>
         <MudTd DataLabel="Current Price" Class="text-right">
-            @context.OriginalPrice.ToString("C")
+            <MudText Color="Color.Secondary">
+                @context.OriginalPrice.ToString("C")
+            </MudText>
         </MudTd>
-        <MudTd DataLabel="Discounted Price" Class="text-right">
+        <MudTd DataLabel="Live Price" Class="text-right">
             @if (context.DiscountPrice.HasValue && 
                  context.DiscountPrice.Value > 0.0m &&
                  context.DiscountPrice != context.OriginalPrice)
             {
-                @context.DiscountPrice.Value.ToString("C")
+                <MudText Color="Color.Tertiary">
+                    @context.DiscountPrice.Value.ToString("C") 
+                    <small>(@context.DiscountPercentage.Value.ToString()% off)</small>
+                </MudText>
+            }
+            else
+            {
+                <MudText Color="Color.Secondary">
+                    @context.OriginalPrice.ToString("C")
+                </MudText>
             }
         </MudTd>
         <MudTd DataLabel="Last Updated">
@@ -50,7 +84,8 @@
                                 AdornmentText="£"
                                 SubmitText="Save"
                                 OnSubmit="UpdatePriceAsync" />
-
+        </MudTd>
+        <MudTd>
             <ProductValueAction ProductId="@context.ProductId"
                                 Tooltip="Add discount"
                                 Icon="@Icons.Material.Filled.LocalOffer"
@@ -60,11 +95,17 @@
                                 SubmitText="Apply"
                                 OnSubmit="AddDiscountAsync" />
 
+
+        </MudTd>
+        <MudTd>
             <MudButton Class="ml-2" Size="Size.Small" Color="Color.Info"
                        OnClick="@(() => OpenHistoryDialog(context))">
-                History
-            </MudButton>
+                <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Secondary"/>
+                       </MudButton>
         </MudTd>
+
+
+
     </RowTemplate>
 
     <NoRecordsContent>
@@ -96,7 +137,8 @@
                     OriginalPrice = p.OriginalPrice,
                     DiscountPrice = p.CurrentPrice,
                     ProductName = p.Name,
-                    LastUpdated = p.LastUpdatedUtc
+                    LastUpdated = p.LastUpdatedUtc,
+                    DiscountPercentage = p.DiscountPercentage
                 });
             });
         }
@@ -126,8 +168,9 @@
         var prod = _products.FirstOrDefault(p => p.ProductId == resData.Id);
         if (prod == null)
         {
-            // What has happened here? reload
+            // I don't think this can happen, but cover all scenarios
             await LoadProductsAsync();
+            //_Logger.LogWarning()
         }
         else
         {
@@ -157,15 +200,17 @@
         var prod = _products.FirstOrDefault(p => p.ProductId == resData.Id);
         if (prod == null)
         {
-            // What has happened here? reload
+            // I don't think this can happen, but cover all scenarios
             await LoadProductsAsync();
+            //_Logger.LogWarning()
         }
         else
         {
             prod.OriginalPrice = resData.OriginalPrice;
             prod.DiscountPrice = resData.DiscountedPrice;
+            prod.DiscountPercentage = percent;
+            prod.LastUpdated = DateTime.UtcNow;
             StateHasChanged();
-
         }
 
         Snackbar.Add("Discount applied.", Severity.Success);

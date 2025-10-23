@@ -33,6 +33,7 @@ namespace VCC.ProductPricingApiTest.Api.Controllers
                     continue;
 
                 discProd.CurrentPrice = _priceService.GetDiscountPrice(discProd.OriginalPrice, d.DiscountPercentage);
+                discProd.DiscountPercentage = d.DiscountPercentage;
             }
 
             return Ok(products);

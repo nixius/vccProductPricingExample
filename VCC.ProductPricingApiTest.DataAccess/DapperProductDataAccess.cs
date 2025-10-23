@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Transactions;
 using VCC.ProductPricingApiTest.Models.DataAccess;
+using VCC.ProductPricingApiTest.Models.EFDataAccess;
 
 namespace VCC.ProductPricingApiTest.DataAccess
 {
@@ -113,6 +114,7 @@ namespace VCC.ProductPricingApiTest.DataAccess
             sb.AppendLine("    ph.ProductPriceHistoryId AS Id, ");
             sb.AppendLine("    ph.ProductId, ");
             sb.AppendLine("    ph.NewPrice AS Price, ");
+            sb.AppendLine("    ph.DiscountPercentage AS DiscountPerc, ");
             sb.AppendLine("    ph.[Timestamp] AS[Date] ");
             sb.AppendLine("FROM dbo.ProductPriceHistory AS ph ");
             sb.AppendLine("WHERE ph.ProductId = @productId ");
@@ -146,6 +148,16 @@ namespace VCC.ProductPricingApiTest.DataAccess
             await conn.ExecuteAsync(sb.ToString(), new { productId, discount });
         }
 
+        public async Task LogDiscountPriceHistoryAsync(int productId, decimal discountPerc, decimal prevPrice, decimal newPrice)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            var sb = new StringBuilder();
+            sb.AppendLine("INSERT INTO dbo.ProductPriceHistory (ProductId, [Timestamp], OldPrice, NewPrice, DiscountPercentage) ");
+            sb.AppendLine("VALUES (@productId,@timestamp, @prevPrice, @newPrice, @discountPerc);");
+
+            await conn.ExecuteAsync(sb.ToString(), new { productId, discountPerc, prevPrice, newPrice });
+        }
 
         public async Task<bool> UpdateProductAsync(DbProduct dbProd)
         {
@@ -166,8 +178,8 @@ namespace VCC.ProductPricingApiTest.DataAccess
             using var conn = new SqlConnection(_connectionString);
 
             var sb = new StringBuilder();
-            sb.AppendLine("INSERT INTO dbo.ProductPriceHistory (ProductId, [Timestamp], OldPrice, NewPrice) ");
-            sb.AppendLine("VALUES (@productId,@timestamp, @oldPrice, @price);");
+            sb.AppendLine("INSERT INTO dbo.ProductPriceHistory (ProductId, [Timestamp], OldPrice, NewPrice, DiscountPercentage) ");
+            sb.AppendLine("VALUES (@productId,@timestamp, @oldPrice, @price, NULL);");
 
             var rows = await conn.ExecuteAsync(sb.ToString(), new { productId, price });
             return rows == 1;

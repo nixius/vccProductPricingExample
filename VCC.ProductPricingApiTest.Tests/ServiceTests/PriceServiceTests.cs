@@ -4,11 +4,11 @@ namespace VCC.ProductPricingApiTest.Tests.ServiceTests
 {
     public class PriceServiceTests
     {
-        private readonly PriceService _priceService;
+        private readonly IPriceService _priceService;
 
         public PriceServiceTests()
         {
-            _priceService = IOCHelper.Instance.GetService<PriceService>();
+            _priceService = IOCHelper.Instance.GetService<IPriceService>();
         }
 
 

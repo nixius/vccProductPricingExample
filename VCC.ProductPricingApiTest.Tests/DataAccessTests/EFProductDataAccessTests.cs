@@ -18,8 +18,8 @@ namespace VCC.ProductPricingApiTest.Tests.DataAccessTests
         [OneTimeSetUp]
         public async Task Initialise()
         {
-            var p1 = new EFProduct { Name = "A", LastUpdated = DateTime.UtcNow, Price = 100m };
-            var p2 = new EFProduct { Name = "B", LastUpdated = DateTime.UtcNow, Price = 200m };
+            var p1 = new EFProduct { Name = "A", LastUpdated = DateTime.UtcNow, Price = 120m };
+            var p2 = new EFProduct { Name = "B", LastUpdated = DateTime.UtcNow, Price = 210m };
             var p3 = new EFProduct { Name = "C", LastUpdated = DateTime.UtcNow, Price = 300m };
 
             _dbContext.Products.AddRange(p1, p2, p3);
@@ -29,8 +29,8 @@ namespace VCC.ProductPricingApiTest.Tests.DataAccessTests
                             new EFProductPriceHistory { Product = p1, Timestamp = DateTime.UtcNow, NewPrice = 110m },
                             new EFProductPriceHistory { Product = p1, Timestamp = DateTime.UtcNow, NewPrice = 120m },
                             new EFProductPriceHistory { Product = p2, Timestamp = DateTime.UtcNow, NewPrice = 200m },
-                            new EFProductPriceHistory { Product = p2, Timestamp = DateTime.UtcNow, NewPrice = 210m },
-                            new EFProductPriceHistory { Product = p3, Timestamp = DateTime.UtcNow, NewPrice = 300m }
+                            new EFProductPriceHistory { Product = p2, Timestamp = DateTime.UtcNow, NewPrice = 210m, DiscountPercentage = 54.0m },
+                            new EFProductPriceHistory { Product = p3, Timestamp = DateTime.UtcNow, NewPrice = 300m, DiscountPercentage = 54.0m }
                         );
 
             _dbContext.ProductDiscounts.Add(
@@ -83,6 +83,18 @@ namespace VCC.ProductPricingApiTest.Tests.DataAccessTests
         }
 
         [Test]
+        public async Task CanGetDiscounts()
+        {
+            var result = await _productDb.GetDiscountsAsync();
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Any(), Is.True);
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result[0].ProductId, Is.EqualTo(3));
+            Assert.That(result[0].DiscountPercentage, Is.EqualTo(10));
+        }
+
+        [Test]
         public async Task CanGetProductHistoryById()
         {
             var result = await _productDb.GetProductHistoryByIdAsync(2);
@@ -94,6 +106,7 @@ namespace VCC.ProductPricingApiTest.Tests.DataAccessTests
             Assert.That(result.ProductHistory.Count, Is.EqualTo(2));
             Assert.That(result.ProductHistory[0].Price, Is.EqualTo(210m));
             Assert.That(result.ProductHistory[1].Price, Is.EqualTo(200m));
+            Assert.That(result.ProductHistory[0].DiscountPercentage, Is.EqualTo(54m));
         }
 
         [Test]
@@ -114,6 +127,12 @@ namespace VCC.ProductPricingApiTest.Tests.DataAccessTests
         public async Task SetDiscount_CompletesSuccesfully()
         {
            await _productDb.SetDiscountPriceAsync(3, 10.0m);
+        }
+
+        [Test]
+        public async Task LogDiscountPriceHistoryAsync_CompletesSuccesfully()
+        {
+            await _productDb.LogDiscountPriceHistoryAsync(1, 55, 123.45m, 789.01m);
         }
     }
 }

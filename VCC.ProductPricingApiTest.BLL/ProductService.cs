@@ -101,7 +101,12 @@ namespace VCC.ProductPricingApiTest.BLL
                 Name = dbProd.Name
             };
 
-            dbProd.ProductHistory.ForEach(ph => apiProd.PriceHistory.Add(new ApiProductHistoryEntry() { Date = ph.Date, Price = ph.Price }));
+            dbProd.ProductHistory.ForEach(ph => apiProd.PriceHistory.Add(new ApiProductHistoryEntry() 
+            { 
+                Date = ph.Date, 
+                Price = ph.Price,
+                AtDiscount = ph.DiscountPercentage.HasValue
+            }));
 
             return apiProd;
         }

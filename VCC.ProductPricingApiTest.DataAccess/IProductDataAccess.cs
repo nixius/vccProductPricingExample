@@ -1,4 +1,5 @@
-﻿using VCC.ProductPricingApiTest.Models.DataAccess;
+﻿using System.Threading.Tasks;
+using VCC.ProductPricingApiTest.Models.DataAccess;
 
 namespace VCC.ProductPricingApiTest.DataAccess
 {
@@ -11,6 +12,7 @@ namespace VCC.ProductPricingApiTest.DataAccess
        Task<DbProduct> GetProductByIdAsync(int productId);
        Task<DbProductHistory> GetProductHistoryByIdAsync(int productId);
        Task SetDiscountPriceAsync(int productId, decimal discount);
+       Task LogDiscountPriceHistoryAsync(int productId, decimal discountPercm, decimal prevPrice, decimal newPrice);
        Task<bool> UpdateProductAsync(DbProduct dbProd);
        Task<bool> UpdatePriceAsync(int productId, decimal price);
     }

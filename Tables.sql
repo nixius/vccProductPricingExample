@@ -10,7 +10,8 @@ CREATE TABLE ProductPriceHistory (
 	ProductId INT NOT NULL,
 	[Timestamp] DATETIME2 NOT NULL,
 	OldPrice decimal(9,2) NULL,
-	NewPrice decimal(9,2) NOT NULL
+	NewPrice decimal(9,2) NOT NULL,
+	DiscountPercentage decimal(9,2) NULL
 );
 
 CREATE TABLE ProductDiscount (
