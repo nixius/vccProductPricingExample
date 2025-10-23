@@ -10,11 +10,11 @@ Future Improvements
 ----
 * Fully unit test dapper SQL layer
 * Environment varibale for DAL switching
-* Some unit tests (for ex. controller) creeped into doing multiple things, or not seperating out enough, which could be imrpoved
-* More unit+integration testing (covergae could be improved)
+* Some unit tests (for ex. controller) creeped into doing multiple things, or not seperating out enough, which could be improved
+* More unit+integration testing (coverage could be improved)
 * Paging for products
 * The price calc is done in too many places, we could change the logic or store a computed price somewhere
-* - This could also help imrpove the price history view, as I was hesitant to keep re-calculating the discount price
+* - This could also help improve the price history view, as I was hesitant to keep re-calculating the discount price
 * Some UI tweaks, such as quick options to 'clear' discount
 * Improved mobile view for the UI
 * Variable names started to get a little messy "Original, New, Current", no longer match the UI, so could be baselined to something cleaner
