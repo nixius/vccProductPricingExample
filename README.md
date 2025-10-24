@@ -10,7 +10,7 @@ An alternative, is to open two powershell windows, browse to the same dir as the
 then browse to:
 
 `http://localhost:5213/Swagger`  for the API Swagger view
-`[http://localhost:5213/Swagge](http://localhost:5217/)`  for the web UI
+`(http://localhost:5217`  for the web UI
 
 # DAL switch
 
