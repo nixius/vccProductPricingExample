@@ -10,7 +10,10 @@ An alternative, is to open two powershell windows, browse to the same dir as the
 then browse to:
 
 `http://localhost:5213/Swagger`  for the API Swagger view
-`(http://localhost:5217`  for the web UI
+
+`http://localhost:5217`  for the web UI
+
+I'm suggesting http, only for the ease of reviewing, of course production would use https and there would be provisions to set that up, outside of the scope of this project. If you run from VS, it may prompt to create a dev cert anyway.
 
 # DAL switch
 
