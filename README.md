@@ -17,7 +17,7 @@ I'm suggesting http, only for the ease of reviewing, of course production would 
 
 # DAL switch
 
-Inside VCC.ProductPricingApiTest.Api/program.cs there is an enum option to switch between to Data Access Layers, EF or a static version using singleton (a third option is in the enum but not fully implemented as it requires an actual DB).
+Inside VCC.ProductPricingApiTest.Api/program.cs there is an enum option to switch between Data Access Layers, EF or a static version using singleton (a third option is in the enum but not fully implemented as it requires an actual DB).
 
 # Other notes
 
