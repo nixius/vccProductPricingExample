@@ -5,6 +5,7 @@ The easiest way to get the project running, is to open the sln file in the top d
 An alternative, is to open two powershell windows, browse to the same dir as the solution and run the following commands (so one powershell instance for each app):
 
 `dotnet run --project .\VCC.ProductPricingApiTest.Api\VCC.ProductPricingApiTest.Api.csproj`
+
 `dotnet run --project .\VCC.ProductPricingApiTest.Web\VCC.ProductPricingApiTest.Web.csproj`
 
 then browse to:
