@@ -1,28 +1,31 @@
 Notes + thoughts whilst developing
 
-* If it wasn't specifically mentioned, I would have created this project in net8 as it's the version with LTS
+* If it wasn't specifically mentioned, for production, I would have created this project in net8 as it's the version with LTS
 * Discounts don't have a time range or anything specified, so I am assuming one discount per product, that gets overriden constantly. In a different scenario I would include
   more logic to have a time range (forever being an option) as well as checking for overlaps etc.
+* I went back and fourth on the 'discount from current price' and opted instead to always discount from the retail price. I know this doesn't follow
+  the spec to the letter, but I can't see where a user would change £100 with 10% to £90, then do 20% off and expect it be £72 isntead of £80.
 * I've made some assumptions on serialisation based on the fact that blazor is the only consumer, for example with dates. I've trusted the blazor app to 
   deseralise in a certain way. If this api were to be used more openly, I might have done things differently with model serailisation, added stricter options etc.
 
 Future Improvements
 ----
 * Fully unit test dapper SQL layer
-* Environment varibale for DAL switching
+* Environment varibale for DAL switching instead of enum
 * Some unit tests (for ex. controller) creeped into doing multiple things, or not seperating out enough, which could be improved
 * More unit+integration testing (coverage could be improved)
-* Paging for products
-* The price calc is done in too many places, we could change the logic or store a computed price somewhere
-* - This could also help improve the price history view, as I was hesitant to keep re-calculating the discount price
-* Some UI tweaks, such as quick options to 'clear' discount
-* Improved mobile view for the UI
-* Variable names started to get a little messy "Original, New, Current", no longer match the UI, so could be baselined to something cleaner
-
+* Paging for products (additional GET api call taking pageIdx and itemsPer page - could use link .Skip() and .Take() or SQL variations)
+* The price calc is done in too many places, the logic should probably store the computed price somewhere to reference
+* - This could also help improve the price history view, the reason it isn't as feature complete as I'd like
+    is because I was hesitant to keep re-calculating the discount price.
+* Some UI nice-to-haves, such as quick options to 'clear' discount, buttons for common amounts, Filtering + Searching
+* Improved mobile view for the UI, wide tables don't play nice
+* Variable names started to get a little messy "Original, New, Current" for pricing, that also don't match the UI, so could be baselined to something cleaner
+* More logging
 
 AI Usage
 ----
 * Some syntax lookups for asserts in unit tests, because fluent assertions appears to now be paid only which is what I usually use
 * Some test case ideas for discounts in unit test project
 * Used to generate a basic layout which I went on to tweak
-* Used for a few MudBlazor specifics, since there have been some changes between Net6 and Net9
+* Used for a few MudBlazor syyntax specifics, since there have been some changes between Net6 and Net9
